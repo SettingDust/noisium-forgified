@@ -2,12 +2,31 @@
 //file:noinspection GroovyAccessibility
 
 plugins {
-    id 'fabric-loom' version '1.2-SNAPSHOT'
+    id "dev.architectury.loom" version "1.4.+"
     id 'maven-publish'
 }
 
 version = "${project.mod_version}+mc${project.supported_minecraft_version}"
 group = project.maven_group
+
+loom {
+    accessWidenerPath = file("src/main/resources/noisium.accesswidener")
+    forge {
+        convertAccessWideners = true
+        mixinConfigs = [
+                "noisium.mixins.json"
+        ]
+
+        // missing access transformers?
+        // don't worry, you can still use them!
+        // note that your AT *MUST* be located at
+        // src/main/resources/META-INF/accesstransformer.cfg
+        // to work as there is currently no config option to change this.
+        // also, any names used in your access transformer will need to be
+        // in SRG mapped ("func_" / "field_" with MCP class names) to work!
+        // (both of these things may be subject to change in the future)
+    }
+}
 
 repositories {
     // Add repositories to retrieve artifacts from in here.
@@ -28,26 +47,18 @@ repositories {
 dependencies {
     // To change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-
-    // Fabric API
-    modRuntimeOnly "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
-
-    // Mod Menu
-    modRuntimeOnly "maven.modrinth:modmenu:${mod_menu_version}"
+    mappings "net.fabricmc:yarn:${project.minecraft_version}+${project.yarn_mappings}:v2"
+    forge "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
 }
 
 processResources {
     inputs.property "version", project.version
     inputs.property "minecraft_version", project.minecraft_version
-    inputs.property "loader_version", project.loader_version
     filteringCharset "UTF-8"
 
-    filesMatching("fabric.mod.json") {
+    filesMatching("META-INF/mods.toml") {
         expand "version": project.version,
-                "minecraft_version": project.minecraft_version,
-                "loader_version": project.loader_version
+                "minecraft_version": project.minecraft_version
     }
 }
 
