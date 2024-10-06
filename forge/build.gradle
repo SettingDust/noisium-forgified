@@ -36,7 +36,7 @@ configurations {
 }
 
 dependencies {
-    forge "net.neoforged:forge:${rootProject.minecraft_version}-${rootProject.neoforge_version}"
+    forge "net.minecraftforge:forge:${rootProject.minecraft_version}-${rootProject.neoforge_version}"
 
     // Mixin Extras
     include(implementation(annotationProcessor("io.github.llamalad7:mixinextras-forge:${project.mixin_extras_version}")))
@@ -84,26 +84,5 @@ sourcesJar {
 components.java {
     withVariantsFromConfiguration(project.configurations.shadowRuntimeElements) {
         skip()
-    }
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            groupId = rootProject.maven_group
-            artifactId = archivesNameForge
-            from components.java
-        }
-    }
-
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/Steveplays28/${rootProject.mod_id}")
-            credentials {
-                username = System.getenv("GITHUB_ACTOR")
-                password = System.getenv("GITHUB_TOKEN")
-            }
-        }
     }
 }

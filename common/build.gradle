@@ -21,18 +21,3 @@ dependencies {
     // Mixin Extras
     compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:${rootProject.mixin_extras_version}"))
 }
-
-publishing {
-    publications {
-        mavenCommon(MavenPublication) {
-            groupId = rootProject.maven_group
-            artifactId = "${rootProject.archives_base_name}-common"
-            from components.java
-        }
-    }
-
-    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-    repositories {
-        // Add repositories to publish to here.
-    }
-}
