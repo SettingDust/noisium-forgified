@@ -2,6 +2,9 @@ package io.github.steveplays28.noisium.mixin.compat.lithium;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.block.BlockState;
+import net.minecraft.structure.StructureSet;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryEntryList;
 import net.minecraft.world.biome.source.BiomeSource;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkSection;
@@ -15,15 +18,21 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Optional;
 import java.util.Set;
 
 @Mixin(NoiseChunkGenerator.class)
 public abstract class LithiumNoiseChunkGeneratorMixin extends ChunkGenerator {
-	public LithiumNoiseChunkGeneratorMixin(BiomeSource biomeSource) {
-		super(biomeSource);
+
+	private LithiumNoiseChunkGeneratorMixin(
+			Registry<StructureSet> registry,
+			Optional<RegistryEntryList<StructureSet>> optional,
+			BiomeSource biomeSource
+	) {
+		super(registry, optional, biomeSource);
 	}
 
-	@Redirect(method = "populateNoise(Lnet/minecraft/world/gen/chunk/Blender;Lnet/minecraft/world/gen/StructureAccessor;Lnet/minecraft/world/gen/noise/NoiseConfig;Lnet/minecraft/world/chunk/Chunk;II)Lnet/minecraft/world/chunk/Chunk;", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/chunk/ChunkSection;setBlockState(IIILnet/minecraft/block/BlockState;Z)Lnet/minecraft/block/BlockState;"))
+	@Redirect(method = "populateNoise(Lnet/minecraft/world/gen/chunk/Blender;Lnet/minecraft/world/gen/StructureAccessor;Lnet/minecraft/world/chunk/Chunk;II)Lnet/minecraft/world/chunk/Chunk;", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/chunk/ChunkSection;setBlockState(IIILnet/minecraft/block/BlockState;Z)Lnet/minecraft/block/BlockState;"))
 	private BlockState noisium$populateNoiseWrapSetBlockStateOperation(@NotNull ChunkSection chunkSection, int chunkSectionBlockPosX, int chunkSectionBlockPosY, int chunkSectionBlockPosZ, @NotNull BlockState blockState, boolean lock) {
 		// Set the blockstate in the palette storage directly to improve performance
 		var blockStateId = chunkSection.blockStateContainer.data.palette.index(blockState);

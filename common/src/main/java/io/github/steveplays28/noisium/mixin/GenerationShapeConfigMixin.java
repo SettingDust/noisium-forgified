@@ -1,7 +1,10 @@
 package io.github.steveplays28.noisium.mixin;
 
 import net.minecraft.world.biome.source.BiomeCoords;
+import net.minecraft.world.biome.source.util.VanillaTerrainParameters;
 import net.minecraft.world.gen.chunk.GenerationShapeConfig;
+import net.minecraft.world.gen.chunk.NoiseSamplingConfig;
+import net.minecraft.world.gen.chunk.SlideConfig;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -20,18 +23,18 @@ public abstract class GenerationShapeConfigMixin {
 	private int noisium$verticalCellBlockCount;
 
 	@Inject(method = "<init>", at = @At(value = "TAIL"))
-	private void noisium$createCacheHorizontalAndVerticalCellBlockCountInject(int minimumY, int height, int horizontalSize, int verticalSize, CallbackInfo ci) {
+	private void noisium$createCacheHorizontalAndVerticalCellBlockCountInject(final int minimumY, final int height, final NoiseSamplingConfig sampling, final SlideConfig topSlide, final SlideConfig bottomSlide, final int horizontalSize, final int verticalSize, final VanillaTerrainParameters vanillaTerrainParameters, final CallbackInfo ci) {
 		noisium$horizontalCellBlockCount = BiomeCoords.toBlock(horizontalSize);
 		noisium$verticalCellBlockCount = BiomeCoords.toBlock(verticalSize);
 	}
 
-	@Inject(method = "horizontalCellBlockCount", at = @At(value = "HEAD"), cancellable = true)
-	private void noisium$horizontalCellBlockCountGetFromCacheInject(CallbackInfoReturnable<Integer> cir) {
+	@Inject(method = "horizontalBlockSize", at = @At(value = "HEAD"), cancellable = true)
+	private void noisium$horizontalBlockSizeGetFromCacheInject(CallbackInfoReturnable<Integer> cir) {
 		cir.setReturnValue(noisium$horizontalCellBlockCount);
 	}
 
-	@Inject(method = "verticalCellBlockCount", at = @At(value = "HEAD"), cancellable = true)
-	private void noisium$verticalCellBlockCountGetFromCacheInject(CallbackInfoReturnable<Integer> cir) {
+	@Inject(method = "verticalBlockSize", at = @At(value = "HEAD"), cancellable = true)
+	private void noisium$verticalBlockSizeGetFromCacheInject(CallbackInfoReturnable<Integer> cir) {
 		cir.setReturnValue(noisium$verticalCellBlockCount);
 	}
 }
